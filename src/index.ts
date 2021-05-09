@@ -17,7 +17,7 @@ import {
   toFormInputPartialName,
 } from './translations'
 import * as stubs from './stub/payloads'
-import { FormField, PublicApi } from '@oryd/kratos-client'
+import {Configuration, PublicApi} from '@oryd/kratos-client'
 import settingsHandler from './routes/settings'
 import verifyHandler from './routes/verification'
 import recoveryHandler from './routes/recovery'
@@ -34,18 +34,22 @@ const protectOathKeeper = jwt({
   algorithms: ['RS256'],
 })
 
-const publicEndpoint = new PublicApi(config.kratos.public)
+const publicEndpoint = new PublicApi(new Configuration({basePath: config.kratos.public}))
 const protectProxy = (req: Request, res: Response, next: NextFunction) => {
   // When using ORY Oathkeeper, the redirection is done by ORY Oathkeeper.
   // Since we're checking for the session ourselves here, we redirect here
   // if the session is invalid.
-  publicEndpoint
-    .whoami(req as { headers: { [name: string]: string } })
-    .then(({ body, response }) => {
-      ;(req as Request & { user: any }).user = { session: body }
+
+  console.info("protect proxy", req.cookies)
+
+  publicEndpoint.whoami(`ory_kratos_session=${req.cookies['ory_kratos_session']}`).then(response => {
+      console.log("protect proxy", response);
+
+      (req as Request & { user: any }).user = { session: response.data }
       next()
     })
     .catch(() => {
+      console.log("protect proxy", "unable to check")
       res.redirect(config.baseUrl + '/auth/login')
     })
 }
