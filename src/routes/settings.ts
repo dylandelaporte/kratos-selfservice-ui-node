@@ -1,11 +1,11 @@
 import {NextFunction, Request, Response} from 'express'
 import config from '../config'
-import {CommonApi} from '@oryd/kratos-client'
+import {AdminApi, Configuration} from '@oryd/kratos-client'
 
-const commonApi = new CommonApi(config.kratos.admin)
+const adminApi = new AdminApi(new Configuration({basePath: config.kratos.admin}))
 
 const settingsHandler = (req: Request, res: Response, next: NextFunction) => {
-  const request = req.query.request
+  const request = req.query.flow
   // The request is used to identify the login and registraion request and
   // return data like the csrf_token and so on.
   if (!request) {
@@ -14,19 +14,18 @@ const settingsHandler = (req: Request, res: Response, next: NextFunction) => {
     return
   }
 
-  commonApi
-    .getSelfServiceBrowserSettingsRequest(request)
-    .then(({body, response}) => {
-      if (response.statusCode == 404 || response.statusCode == 410 || response.statusCode == 403) {
+  adminApi.getSelfServiceSettingsFlow(request + "")
+    .then(response => {
+      if (response.status == 404 || response.status == 410 || response.status == 403) {
         res.redirect(
           `${config.kratos.browser}/self-service/browser/flows/settings`
         )
         return
-      } else if (response.statusCode != 200) {
-        return Promise.reject(body)
+      } else if (response.status != 200) {
+        return Promise.reject(response.data)
       }
 
-      return Promise.resolve(body)
+      return Promise.resolve(response.data)
     })
     .then(request => {
       const methodConfig = (key: string) => request?.methods[key]?.config
