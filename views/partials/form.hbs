@@ -1,6 +1,5 @@
 <form action="{{form.action}}" method="{{form.method}}">
-    {{> messages messages=form.messages }}
-    {{> form_fields fields=form.fields }}
+    {{> form_fields fields=form.nodes }}
     {{#if submitLabel}}
         <button type="submit">{{submitLabel}}</button>
     {{/if}}

@@ -1,11 +1,11 @@
-<button name="{{name}}" type="{{type}}" value="{{value}}" {{#if disabled}}disabled{{/if}}>
-    {{#if (eq name 'provider')}}
-        Continue with {{value}}
-    {{else if (eq name 'link')}}
-        Link {{value}}
-    {{else if (eq name 'unlink')}}
-        Unlink {{value}}
+<button name="{{attributes.name}}" type="{{attributes.type}}" value="{{attributes.value}}" {{#if attributes.disabled}}disabled{{/if}}>
+    {{#if (eq attribtues.name 'provider')}}
+        Continue with {{meta.label.text}}
+    {{else if (eq attributes.name 'link')}}
+        Link {{meta.label.text}}
+    {{else if (eq attributes.name 'unlink')}}
+        Unlink {{meta.label.text}}
     {{else}}
-        {{value}}
+        {{meta.label.text}}
     {{/if}}
 </button>
