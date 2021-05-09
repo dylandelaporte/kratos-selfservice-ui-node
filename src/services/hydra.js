@@ -24,10 +24,10 @@ function get(flow, challenge) {
     }
     )
     .then(function (res) {
-      if (res.status < 200 || res.status > 302) {
+      if ((res.status < 200 || res.status > 302) && res.status !== 410) {
         // This will handle any errors that aren't network related (network related errors are handled automatically)
         return res.json().then(function (body) {
-          console.error('An error occurred while making a HTTP request: ', body)
+          console.error('An error occurred while making a HTTP GET request: ', body)
           return Promise.reject(new Error(body.error.message))
         })
       }
@@ -56,7 +56,7 @@ function put(flow, action, challenge, body) {
       if (res.status < 200 || res.status > 302) {
         // This will handle any errors that aren't network related (network related errors are handled automatically)
         return res.json().then(function (body) {
-          console.error('An error occurred while making a HTTP request: ', body)
+          console.error('An error occurred while making a HTTP PUT request: ', body)
           return Promise.reject(new Error(body.error.message))
         })
       }
