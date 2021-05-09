@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import config from '../config'
-import { CommonApi, ErrorContainer } from '@oryd/kratos-client'
-import { IncomingMessage } from 'http'
+import {AdminApi, Configuration} from '@oryd/kratos-client'
 
-const commonApi = new CommonApi(config.kratos.admin)
+const adminApi = new AdminApi(new Configuration({basePath: config.kratos.admin}))
 
 export default (req: Request, res: Response, next: NextFunction) => {
   const error = req.query.error
@@ -14,27 +13,20 @@ export default (req: Request, res: Response, next: NextFunction) => {
     return
   }
 
-  commonApi
-    .getSelfServiceError(error)
-    .then(
-      ({
-        body,
-        response,
-      }: {
-        body: ErrorContainer
-        response: IncomingMessage
-      }) => {
-        if (response.statusCode == 404) {
+  adminApi
+    .getSelfServiceError(error + "")
+    .then(response => {
+        if (response.status == 404) {
           // The error could not be found, redirect back to home.
           res.redirect(config.baseUrl)
           return
         }
 
-        return body
+        return response.data
       }
     )
-    .then((errorContainer = {}) => {
-      if ('errors' in errorContainer) {
+    .then(errorContainer => {
+      if (errorContainer != undefined && 'errors' in errorContainer) {
         res.status(500).render('error', {
           message: JSON.stringify(errorContainer.errors, null, 2),
         })
