@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import {NextFunction, Request, Response} from 'express'
 import config from './../config'
 import hydra from './../services/hydra.js'
 import jd from 'jwt-decode'
@@ -7,71 +7,63 @@ import url from 'url';
 type UserRequest = Request & { user: any }
 
 const authInfo = (req: UserRequest) => {
-  if (config.securityMode === 'JWT') {
-    const bearer = req.header('authorization')
-    if (bearer) {
-      // The header will be in format of `Bearer eyJhbGci...`. We therefore split at the whitespace to get the token
-      // itself only.
-      let token = bearer.split(' ')[1]
-      return {
-        raw: token,
-        claims: req.user,
-      }
+    if (config.securityMode === 'JWT') {
+        const bearer = req.header('authorization')
+        if (bearer) {
+            // The header will be in format of `Bearer eyJhbGci...`. We therefore split at the whitespace to get the token
+            // itself only.
+            let token = bearer.split(' ')[1]
+            return {
+                raw: token,
+                claims: req.user,
+            }
+        }
+    } else {
+        const session = req.cookies.ory_kratos_session
+        if (session) {
+            return {
+                raw: session,
+                claims: req.user,
+            }
+        }
     }
-  } else {
-    const session = req.cookies.ory_kratos_session
-    if (session) {
-      return {
-        raw: session,
-        claims: req.user,
-      }
-    }
-  }
 
-  // In the demo mode, the token will not be available in the header. Instead, we'll use this example token:
-  const token =
-    'eyJhbGciOiJSUzI1NiIsImtpZCI6ImEyYWE5NzM5LWQ3NTMtNGEwZC04N2VlLTYxZjEwMTA1MDI3NyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzg5MjU0MTMsImlhdCI6MTU3ODkyNTM1MywiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo0NDU1LyIsImp0aSI6ImM3NDhjYzc4LTJlOTAtNGVhNi1iNTdmLTA3YmI4YjNlNGUxYyIsIm5iZiI6MTU3ODkyNTM1Mywic2Vzc2lvbiI6eyJhdXRoZW50aWNhdGVkX2F0IjoiMDAwMS0wMS0wMVQwMDowMDowMFoiLCJleHBpcmVzX2F0IjoiMjAyMC0wMS0wOVQxOTozMDoxMC43MzM4NDRaIiwiaWRlbnRpdHkiOnsiaWQiOiJlM2IxZmM2MS0wMjMxLTQwODMtYjQ3MC0yODkwMDE2ZmY5ZmUiLCJ0cmFpdHMiOnsiZW1haWwiOiJoaWxhZnNkaG9pdWFmZHNAYXNkZi5kZSJ9LCJ0cmFpdHNfc2NoZW1hX3VybCI6ImZpbGU6Ly8vZXRjL2NvbmZpZy9rcmF0b3MvaWRlbnRpdHkudHJhaXRzLnNjaGVtYS5qc29uIn0sImlzc3VlZF9hdCI6IjIwMjAtMDEtMDlUMTg6MzA6MTAuNzMzOTMwNVoiLCJzaWQiOiI5NWQwMWNkYy1kMGY2LTQ1Y2MtODdlYi02NTA1ZTRkYTlkNTcifSwic3ViIjoiZTNiMWZjNjEtMDIzMS00MDgzLWI0NzAtMjg5MDAxNmZmOWZlIn0.JZVmc-EG-1k5RB7W4mouU6ycrRVJPimNUZXL59fwnIWKokhzV0itgYXm4eFV5VDYSt5S7VQgK7PmJFqYaaLtdz1yqqACH4E19VSanwB57mKCawePSvHIYnCnQW0E8vr9RavQPeluMfDS239FMow7-kq1ydkKVryhImfllW2pmAXC-0K9_0BE584u4RV7Ki0rGG2xhb8DelHpHurXStFRzi2BDW_J5xn1zlb9QyYEThX17KnXRJZkJpmTUgUBPGfUHSL6-267YgkIGKzVgCQ0dBFfAX4vDqL4qthNP3K9iS404jXLSrwYvTN6Y_xI-B-WCSqXX3PGBTnMgKB5pCsiPA'
-  return {
-    raw: token,
-    // We use `jwt-decoder` here to decode the token header and display it in the dashboard.
-    // BE AWARE THAT `jwt-decoder` DOES NOT VALIDATE THE TOKEN, it just decodes it. This method is not secure
-    // in a real-world scenario, but we use it here to decode and display the token header!
-    claims: jd(token),
-  }
+    // In the demo mode, the token will not be available in the header. Instead, we'll use this example token:
+    const token =
+        'eyJhbGciOiJSUzI1NiIsImtpZCI6ImEyYWE5NzM5LWQ3NTMtNGEwZC04N2VlLTYxZjEwMTA1MDI3NyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzg5MjU0MTMsImlhdCI6MTU3ODkyNTM1MywiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo0NDU1LyIsImp0aSI6ImM3NDhjYzc4LTJlOTAtNGVhNi1iNTdmLTA3YmI4YjNlNGUxYyIsIm5iZiI6MTU3ODkyNTM1Mywic2Vzc2lvbiI6eyJhdXRoZW50aWNhdGVkX2F0IjoiMDAwMS0wMS0wMVQwMDowMDowMFoiLCJleHBpcmVzX2F0IjoiMjAyMC0wMS0wOVQxOTozMDoxMC43MzM4NDRaIiwiaWRlbnRpdHkiOnsiaWQiOiJlM2IxZmM2MS0wMjMxLTQwODMtYjQ3MC0yODkwMDE2ZmY5ZmUiLCJ0cmFpdHMiOnsiZW1haWwiOiJoaWxhZnNkaG9pdWFmZHNAYXNkZi5kZSJ9LCJ0cmFpdHNfc2NoZW1hX3VybCI6ImZpbGU6Ly8vZXRjL2NvbmZpZy9rcmF0b3MvaWRlbnRpdHkudHJhaXRzLnNjaGVtYS5qc29uIn0sImlzc3VlZF9hdCI6IjIwMjAtMDEtMDlUMTg6MzA6MTAuNzMzOTMwNVoiLCJzaWQiOiI5NWQwMWNkYy1kMGY2LTQ1Y2MtODdlYi02NTA1ZTRkYTlkNTcifSwic3ViIjoiZTNiMWZjNjEtMDIzMS00MDgzLWI0NzAtMjg5MDAxNmZmOWZlIn0.JZVmc-EG-1k5RB7W4mouU6ycrRVJPimNUZXL59fwnIWKokhzV0itgYXm4eFV5VDYSt5S7VQgK7PmJFqYaaLtdz1yqqACH4E19VSanwB57mKCawePSvHIYnCnQW0E8vr9RavQPeluMfDS239FMow7-kq1ydkKVryhImfllW2pmAXC-0K9_0BE584u4RV7Ki0rGG2xhb8DelHpHurXStFRzi2BDW_J5xn1zlb9QyYEThX17KnXRJZkJpmTUgUBPGfUHSL6-267YgkIGKzVgCQ0dBFfAX4vDqL4qthNP3K9iS404jXLSrwYvTN6Y_xI-B-WCSqXX3PGBTnMgKB5pCsiPA'
+    return {
+        raw: token,
+        // We use `jwt-decoder` here to decode the token header and display it in the dashboard.
+        // BE AWARE THAT `jwt-decoder` DOES NOT VALIDATE THE TOKEN, it just decodes it. This method is not secure
+        // in a real-world scenario, but we use it here to decode and display the token header!
+        claims: jd(token),
+    }
 }
 
-export default (req: Request, res: Response) => {
-  // The challenge is used to fetch information about the login request from ORY Hydra.
-  console.log("HOME PAGE")
-  const query = url.parse(req.url, true).query;
-  // TODO FIGURE OUT HOW TO DO LOGIN AND REGISTRATION PAGES WITHOUT COOKIE FOR KEEPING THE CHALLENGE
-  let challenge = query.login_challenge || req.cookies.login_challenge;
-  res.cookie("login_challenge", challenge);
-  console.log(challenge);
+export default (req: Request, res: Response, next: NextFunction) => {
+    // The challenge is used to fetch information about the login request from ORY Hydra.
+    console.log("HOME PAGE")
+    const query = url.parse(req.url, true).query;
+    // TODO FIGURE OUT HOW TO DO LOGIN AND REGISTRATION PAGES WITHOUT COOKIE FOR KEEPING THE CHALLENGE
+    let challenge = query.login_challenge || req.cookies.login_challenge;
+    res.cookie("login_challenge", challenge);
 
-  const ai = authInfo(req as UserRequest)
+    if (challenge) {
+        console.log("challenge", challenge);
 
-  hydra.acceptLoginRequest(challenge, {
-    // Subject is an alias for user ID. A subject can be a random string, a UUID, an email address, ....
-    subject: ai.claims.session.identity.traits.email,
+        return hydra.getLoginRequest(challenge).then((hydraResponse: any) => {
+            if (hydraResponse.redirect_to) {
+                res.redirect(hydraResponse.redirect_to);
+            } else {
+                return Promise.reject(new Error("Unable to get redirect url"));
+            }
+        }).catch(function (error: any) {
+            console.error(error);
+            next(error);
+        });
+    } else {
+        console.log("redirect to dashboard");
 
-    // This tells hydra to remember the browser and automatically authenticate the user in future requests. This will
-    // set the "skip" parameter in the other route to true on subsequent requests!
-    remember: true,
-
-    // When the session expires, in seconds. Set this to 0 so it will never expire.
-    remember_for: 3600,
-
-    // Sets which "level" (e.g. 2-factor authentication) of authentication the user has. The value is really arbitrary
-    // and optional. In the context of OpenID Connect, a value of 0 indicates the lowest authorization level.
-    // acr: '0',
-  })
-  .then(function (response:any) {
-    // All we need to do now is to redirect the user back to hydra!
-    res.redirect(response.redirect_to);
-  })
-  // This will handle any error that happens when making HTTP calls to hydra
-  .catch(function (error:any) {
-    console.log(error);
-  });
+        res.redirect(`${config.baseUrl}/dashboard`)
+    }
 }
