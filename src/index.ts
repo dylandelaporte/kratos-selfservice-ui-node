@@ -159,7 +159,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   })
 })
 
-const port = Number(process.env.PORT) || 3000
+const port = Number(process.env.PORT) || 80
 app.listen(port, () => {
   console.log(`Listening on http://0.0.0.0:${port}`)
   console.log(`Security mode: ${config.securityMode}`)
