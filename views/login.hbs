@@ -1,47 +1,59 @@
-<div class="auth">
-    <div class="container">
-        {{> icon_logo}}
-        <h5 class="subheading">Welcome to this example login screen!</h5>
+<section class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-5-tablet is-4-desktop is-6-widescreen">
+                    {{> messages messages=messages className="global"}}
 
-        {{> messages messages=messages className="global"}}
-        
-        {{#if challenge}}
-            <form>
-                <div style="margin-bottom: 8px">Hydra Challenge</div>
-                <label id="login-challenge">
-                    <input name="challenge" value={{challenge}}></input>
-                </label>
-            </form>
-        {{/if}}
+                    {{#if challenge}}
+                        <form>
+                            <!--<div style="margin-bottom: 8px">Hydra Challenge</div>
+                            <label id="login-challenge">
+                                <input name="challenge" value={{challenge}}></input>
+                            </label>-->
+                            <div class="field">
+                                <label class="label">Hydra Challenge</label>
+                                <div class="control">
+                                    <input class="input" type="text" name="challenge" value={{challenge}}>
+                                </div>
+                            </div>
+                        </form>
+                    {{/if}}
 
-        {{#if id}}
-            <form>
-                <div style="margin-bottom: 8px">Kratos Request Id</div>
-                <label id="login-request">
-                    <input name="id" value={{id}}></input>
-                </label>
-            </form>
-        {{/if}}
-        
-        
-        {{#if password}}
-            <div id="login-password">
-                <div style="margin-bottom: 8px">Login</div>
-                {{> form form=password}}
+                    {{#if id}}
+                        <form>
+                            <!--<div style="margin-bottom: 8px">Kratos Request Id</div>
+                            <label id="login-request">
+                                <input name="id" value={{id}}></input>
+                            </label>-->
+                            <div class="field">
+                                <label class="label">Kratos Request Id</label>
+                                <div class="control">
+                                    <input class="input" type="text" name="id" value={{id}}>
+                                </div>
+                            </div>
+                        </form>
+                    {{/if}}
+
+
+                    {{#if password}}
+                        <div id="login-password">
+                            <h2 class="title">Login</h2>
+                            {{> form form=password}}
+                        </div>
+                    {{/if}}
+
+                    {{#if oidc}}
+                        <div id="login-oidc">
+                            {{> form form=oidc}}
+                        </div>
+                    {{/if}}
+
+                    <hr>
+
+                    <a href="{{pathPrefix}}auth/registration?login_challenge={{challenge}}" class="button is-ghost">Register new account</a>
+                </div>
             </div>
-        {{/if}}
-
-        {{#if oidc}}
-            <div id="login-oidc">
-                {{> form form=oidc}}
-            </div>
-        {{/if}}
-
-        <hr class="divider">
-
-        <div class="alternative-actions">
-            <!-- <a href="auth/registration">Recover password</a> -->
-            <a href="{{pathPrefix}}auth/registration?login_challenge={{challenge}}">Register new account</a>
         </div>
     </div>
-</div>
+</section>

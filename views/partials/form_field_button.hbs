@@ -1,4 +1,4 @@
-<button name="{{attributes.name}}" type="{{attributes.type}}" value="{{attributes.value}}" {{#if attributes.disabled}}disabled{{/if}}>
+<button name="{{attributes.name}}" class="button is-link is-rounded" type="{{attributes.type}}" value="{{attributes.value}}" {{#if attributes.disabled}}disabled{{/if}}>
     {{#if (eq attribtues.name 'provider')}}
         Continue with {{meta.label.text}}
     {{else if (eq attributes.name 'link')}}

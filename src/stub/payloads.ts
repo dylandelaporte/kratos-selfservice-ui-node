@@ -66,7 +66,7 @@ export const login = {
       "config": {
         "action": "http://127.0.0.1:4455/.ory/kratos/public/auth/browser/methods/password/login?request=bda73c77-1e21-4bfd-b85a-322fce2e4576",
         "method": "POST",
-        "fields": [
+        "nodes": [
           {
             "name": "csrf_token",
             "type": "hidden",
@@ -111,19 +111,33 @@ export const registration = {
         "method": "POST",
         "fields": [
           {
-            "name": "csrf_token",
-            "type": "hidden",
-            "required": true,
-            "value": "xLg4B9WnuC0Ue+j9ay5EQvleaJpOl0H9xJJ7W3+Bwv7RNOhobPZOYFQ0KjXzWNkIzsPF/BBraWSyqa0+Pvwqtw=="
+            "attributes": {
+              "name": "csrf_token",
+              "type": "hidden",
+              "required": true,
+              "value": "xLg4B9WnuC0Ue+j9ay5EQvleaJpOl0H9xJJ7W3+Bwv7RNOhobPZOYFQ0KjXzWNkIzsPF/BBraWSyqa0+Pvwqtw=="
+            },
+            "meta": {
+              "label": {
+                "text": "CSRF"
+              }
+            }
           },
           {
             "name": "password", "type": "password", "required": true,
             "errors": [{"message": "password: Is required"}]
           },
           {
-            "name": "traits.email",
-            "type": "text",
-            "value": "",
+            "attributes": {
+              "name": "traits.email",
+              "type": "text",
+              "value": ""
+            },
+            "meta": {
+              "label": {
+                "text": "Email"
+              }
+            },
             "errors": [{"message": "traits.email: String length must be greater than or equal to 3"}, {"message": "traits.email: Does not match format 'email'"}]
           }
         ]

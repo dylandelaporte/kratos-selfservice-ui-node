@@ -1,7 +1,15 @@
-<fieldset>
+<!--<fieldset>
     <label>
         <input name="{{attributes.name}}" type="{{attributes.type}}" value="{{attributes.value}}" placeholder="{{meta.label.text}}" {{#if attributes.disabled}}disabled{{/if}} {{#if attributes.required}}required{{/if}}>
         <span>{{meta.label.text}}</span>
     </label>
     {{> messages }}
-</fieldset>
+</fieldset>-->
+
+<div class="field">
+    <label class="label">{{meta.label.text}}</label>
+    <div class="control">
+        <input name="{{attributes.name}}" type="{{attributes.type}}" class="input" value="{{attributes.value}}" placeholder="{{meta.label.text}}" {{#if attributes.disabled}}disabled{{/if}} {{#if attributes.required}}required{{/if}}>
+    </div>
+    <p class="help">{{> messages }}</p>
+</div>
