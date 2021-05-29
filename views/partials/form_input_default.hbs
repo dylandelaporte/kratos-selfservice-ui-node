@@ -11,5 +11,5 @@
     <div class="control">
         <input name="{{attributes.name}}" type="{{attributes.type}}" class="input" value="{{attributes.value}}" placeholder="{{meta.label.text}}" {{#if attributes.disabled}}disabled{{/if}} {{#if attributes.required}}required{{/if}}>
     </div>
-    <p class="help">{{> messages }}</p>
+    {{> messages }}
 </div>

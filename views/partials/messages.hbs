@@ -1,5 +1,3 @@
-<div class="messages {{className}}">
-    {{~#each messages~}}
-        <div class="message {{type}}">{{text}}</div>
-    {{~/each~}}
-</div>
+{{~#each messages~}}
+    <p class="help {{type}}">{{text}}</p>
+{{~/each~}}
