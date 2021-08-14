@@ -117,8 +117,8 @@ export const postConsent = (
         // scopes from the same user, without showing the UI, in the future.
         remember: Boolean(req.body.remember),
 
-        // When this "remember" sesion expires, in seconds. Set this to 0 so it will never expire.
-        remember_for: 3600,
+        // When this "remember" session expires, in seconds. Set this to 0 so it will never expire.
+        remember_for: 3600 * 24 * 7,
       })
         .then(function (response:any) {
           // All we need to do now is to redirect the user back to hydra!

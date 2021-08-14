@@ -64,10 +64,10 @@ export const authHandler = (type: 'login' | 'registration') => (
                                 return hydra.acceptLoginRequest(challenge, {
                                     // All we need to do is to confirm that we indeed want to log in the user.
                                     subject: session?.identity?.traits?.email,
-                                    remember: false,//Boolean(req.body.remember),
+                                    remember: false,
 
                                     // When the session expires, in seconds. Set this to 0 so it will never expire.
-                                    remember_for: 3600,
+                                    remember_for: 3600 * 24 * 7,
                                 })
                             })
                             .then((hydraResponse: any) => {
